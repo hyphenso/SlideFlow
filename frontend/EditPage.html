@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Digital Signage Editor</title>
+
+        <link rel="stylesheet" href="style2.css" />
+
+        <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    </head>
+
+    <body>
+        <header>
+            <div class="header-left">
+                <input
+                    class="logo-text"
+                    id="signName"
+                    value="Digital Signage"
+                />
+            </div>
+            <div class="header-right">
+                <button class="btn btn-outline" onclick="preview()">
+                    Preview
+                </button>
+                <button class="btn btn-outline" onclick="saveDesign()">
+                    Save
+                </button>
+                <button class="btn btn-primary" onclick="downloadDesign()">
+                    Download
+                </button>
+            </div>
+        </header>
+
+        <div class="editor-container">
+            <!-- LEFT TOOLBAR -->
+            <div class="toolbar">
+                <div class="tool-btn" onclick="addText()">
+                    T<span>Text</span>
+                </div>
+                <div class="tool-btn" onclick="addShape()">
+                    ⬛<span>Shape</span>
+                </div>
+                <div class="tool-btn" onclick="uploadImage()">
+                    🖼<span>Image</span>
+                </div>
+                <hr />
+                <div class="tool-btn" onclick="openTemplates()">
+                    📄<span>Templates</span>
+                </div>
+                <div class="tool-btn" onclick="openSchedule()">
+                    ⏰<span>Schedule</span>
+                </div>
+            </div>
+
+            <!-- CANVAS -->
+            <div class="canvas-area">
+                <div class="canvas-wrapper">
+                    <div class="canvas-mock resizable-canvas" id="canvas"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEMPLATE MODAL -->
+        <div class="modal-overlay" id="templateModal">
+            <div class="modal modal-large">
+                <button class="close-btn" onclick="closeTemplates()">✕</button>
+                <h2>Templates</h2>
+
+                <input
+                    class="template-search"
+                    id="templateSearch"
+                    placeholder="Search templates..."
+                    onkeydown="if (event.key === 'Enter') searchTemplates();"
+                />
+
+                <div class="template-tabs">
+                    <button onclick="loadPexels('promotion')">Promo</button>
+                    <button onclick="loadPexels('food')">Menu</button>
+                    <button onclick="loadPexels('event')">Event</button>
+                    <button onclick="loadPexels('business')">Business</button>
+                    <button onclick="loadPexels('technology')">Tech</button>
+                </div>
+
+                <div class="template-grid" id="templateGrid"></div>
+            </div>
+        </div>
+
+        <!-- SCHEDULE MODAL -->
+        <div class="modal-overlay" id="scheduleModal">
+            <div class="modal">
+                <button class="close-btn" onclick="closeSchedule()">✕</button>
+                <h2>Schedule Slide</h2>
+
+                <label>Start Date & Time</label>
+                <input type="datetime-local" id="scheduleStart" />
+
+                <label style="margin-top: 12px">End Date & Time</label>
+                <input type="datetime-local" id="scheduleEnd" />
+
+                <div style="margin-top: 20px; text-align: right">
+                    <button class="btn btn-outline" onclick="closeSchedule()">
+                        Cancel
+                    </button>
+                    <button class="btn btn-primary" onclick="saveSchedule()">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <input type="file" id="fileInput" hidden />
+
+        <script>
+            /* ================= CONFIG ================= */
+            const PEXELS_KEY =
+                "L6w1BIl04BhqryxVmqQUz4OuVe0Ve4dIYBkQqpfYT2Dv0IXDiTxaxMMD";
+
+            const canvas = document.getElementById("canvas");
+            let selected = null;
+
+            /* ================= SELECTION ================= */
+            function selectElement(el) {
+                if (selected) selected.classList.remove("selected");
+                selected = el;
+                el.classList.add("selected");
+            }
+
+            canvas.addEventListener("mousedown", () => {
+                if (selected) selected.classList.remove("selected");
+                selected = null;
+            });
+
+            /* ================= INTERACT ================= */
+            function makeInteractive(el) {
+                el.style.position = "absolute";
+                el.dataset.x ||= 0;
+                el.dataset.y ||= 0;
+
+                interact(el)
+                    .draggable({
+                        listeners: {
+                            move(e) {
+                                const x = +el.dataset.x + e.dx;
+                                const y = +el.dataset.y + e.dy;
+                                el.style.transform = `translate(${x}px, ${y}px)`;
+                                el.dataset.x = x;
+                                el.dataset.y = y;
+                            },
+                        },
+                    })
+                    .resizable({
+                        edges: {
+                            left: true,
+                            right: true,
+                            top: true,
+                            bottom: true,
+                        },
+                    });
+
+                el.addEventListener("mousedown", (e) => {
+                    e.stopPropagation();
+                    selectElement(el);
+                });
+            }
+
+            /* ================= DELETE ELEMENT ================= */
+            document.addEventListener("keydown", (e) => {
+                if (!selected) return;
+                if (e.key === "Backspace" || e.key === "Delete") {
+                    e.preventDefault();
+                    selected.remove();
+                    selected = null;
+                }
+            });
+
+            /* ================= ELEMENTS ================= */
+            function addText() {
+                const el = document.createElement("div");
+                el.className = "canvas-item text-item";
+                el.contentEditable = true;
+                el.innerText = "Edit text";
+                el.style.width = "200px";
+                el.style.left = "60px";
+                el.style.top = "60px";
+                canvas.appendChild(el);
+                makeInteractive(el);
+            }
+
+            function addShape() {
+                const el = document.createElement("div");
+                el.className = "canvas-item";
+                el.style.width = "160px";
+                el.style.height = "90px";
+                el.style.background = "#7a3cff";
+                el.style.left = "90px";
+                el.style.top = "90px";
+                canvas.appendChild(el);
+                makeInteractive(el);
+            }
+
+            function uploadImage() {
+                fileInput.onchange = (e) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const img = document.createElement("img");
+                        img.src = reader.result;
+                        img.className = "canvas-item";
+                        img.style.width = "200px";
+                        canvas.appendChild(img);
+                        makeInteractive(img);
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                };
+                fileInput.click();
+            }
+
+            /* ================= CANVAS RESIZE ================= */
+            interact(".resizable-canvas")
+                .resizable({
+                    edges: { left: true, right: true, top: true, bottom: true },
+                })
+                .on("resizemove", (e) => {
+                    e.target.style.width = e.rect.width + "px";
+                    e.target.style.height = e.rect.height + "px";
+                });
+
+            /* ================= TEMPLATES ================= */
+            function openTemplates() {
+                templateModal.dataset.open = "true";
+                loadPexels("promotion");
+            }
+            function closeTemplates() {
+                templateModal.dataset.open = "false";
+            }
+
+            async function loadPexels(query) {
+                const grid = document.getElementById("templateGrid");
+                grid.innerHTML = "Loading...";
+                const res = await fetch(
+                    `https://api.pexels.com/v1/search?query=${query}&per_page=20`,
+                    { headers: { Authorization: PEXELS_KEY } },
+                );
+                const data = await res.json();
+                grid.innerHTML = "";
+                data.photos.forEach((p) => {
+                    const card = document.createElement("div");
+                    card.className = "template-card";
+                    card.innerHTML = `<img src="${p.src.medium}">`;
+                    card.onclick = () => applyTemplate(p.src.large2x);
+                    grid.appendChild(card);
+                });
+            }
+
+            function searchTemplates() {
+                if (templateSearch.value.trim())
+                    loadPexels(templateSearch.value);
+            }
+
+            function applyTemplate(url) {
+                const img = document.createElement("img");
+                img.src = url;
+                img.className = "canvas-item template-item";
+                img.style.width = "100%";
+                img.style.height = "100%";
+                img.style.left = "0";
+                img.style.top = "0";
+                canvas.appendChild(img);
+                makeInteractive(img);
+                selectElement(img);
+                closeTemplates();
+            }
+
+            /* ================= SCHEDULE ================= */
+            function openSchedule() {
+                scheduleModal.dataset.open = "true";
+                const saved = JSON.parse(
+                    localStorage.getItem("slideSchedule") || "null",
+                );
+                if (saved) {
+                    scheduleStart.value = saved.start;
+                    scheduleEnd.value = saved.end;
+                }
+            }
+            function closeSchedule() {
+                scheduleModal.dataset.open = "false";
+            }
+
+            function saveSchedule() {
+                if (!scheduleStart.value || !scheduleEnd.value) {
+                    alert("Please select both start and end time");
+                    return;
+                }
+                localStorage.setItem(
+                    "slideSchedule",
+                    JSON.stringify({
+                        start: scheduleStart.value,
+                        end: scheduleEnd.value,
+                    }),
+                );
+                alert("Schedule saved");
+                closeSchedule();
+            }
+
+            /* ================= SAVE / EXPORT ================= */
+            /* ================= SAVE / EXPORT ================= */
+            async function saveDesign() {
+                const payload = {
+                    name: signName.value,
+                    html: canvas.innerHTML,
+                    schedule: JSON.parse(
+                        localStorage.getItem("slideSchedule") || "null",
+                    ),
+                };
+
+                try {
+                    const res = await fetch(
+                        "http://localhost:5041/api/slides",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(payload),
+                        },
+                    );
+
+                    if (!res.ok) {
+                        throw new Error("Failed to save to database");
+                    }
+
+                    const result = await res.json();
+                    alert("Saved to database ✔");
+                    console.log("Saved slide:", result);
+                } catch (err) {
+                    console.error(err);
+                    alert("Error saving slide (check API)");
+                }
+            }
+
+            function downloadDesign() {
+                html2canvas(canvas).then((c) => {
+                    const a = document.createElement("a");
+                    a.download = "signage.png";
+                    a.href = c.toDataURL();
+                    a.click();
+                });
+            }
+
+            function preview() {
+                html2canvas(canvas).then((c) => {
+                    const w = window.open();
+                    w.document.write(
+                        `<button onclick="window.close()">✕</button><img src="${c.toDataURL()}" style="width:100%">`,
+                    );
+                });
+            }
+        </script>
+    </body>
+</html>

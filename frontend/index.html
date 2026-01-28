@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SlideFlow Login - by AnalytIQ & Designers</title>
+
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap");
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: "Inter", sans-serif;
+            }
+
+            body {
+                background: #0d0b16;
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
+
+            /* Animated gradient glow */
+            .bg-glow {
+                position: absolute;
+                width: 450px;
+                height: 450px;
+                background: radial-gradient(
+                    circle,
+                    rgba(140, 75, 255, 0.65),
+                    rgba(0, 0, 0, 0)
+                );
+                filter: blur(85px);
+                animation: float 6s ease-in-out infinite alternate;
+            }
+            @keyframes float {
+                0% {
+                    transform: translate(-80px, -60px);
+                }
+                100% {
+                    transform: translate(80px, 60px);
+                }
+            }
+
+            /* Login Box */
+            .login-box {
+                position: relative;
+                width: 340px;
+                padding: 30px;
+                border-radius: 16px;
+                background: rgba(255, 255, 255, 0.08);
+                backdrop-filter: blur(14px);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                box-shadow: 0 0 25px rgba(120, 60, 255, 0.25);
+                animation: pop 0.7s ease;
+            }
+
+            @keyframes pop {
+                from {
+                    opacity: 0;
+                    transform: scale(0.85) translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1) translateY(0);
+                }
+            }
+
+            .logo {
+                font-size: 32px;
+                font-weight: 700;
+                text-align: center;
+                color: white;
+                margin-bottom: 20px;
+                letter-spacing: 1px;
+            }
+
+            .logo span {
+                background: linear-gradient(135deg, #8a52ff, #c099ff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            label {
+                color: #cbbfff;
+                font-size: 14px;
+            }
+
+            input {
+                width: 100%;
+                padding: 12px;
+                margin-top: 6px;
+                margin-bottom: 18px;
+                border: none;
+                border-radius: 8px;
+                font-size: 15px;
+                background: rgba(255, 255, 255, 0.12);
+                color: white;
+                outline: none;
+                transition: 0.2s;
+            }
+
+            input:focus {
+                background: rgba(255, 255, 255, 0.17);
+                box-shadow: 0 0 6px rgba(152, 101, 255, 0.6);
+            }
+
+            .btn {
+                width: 100%;
+                padding: 12px;
+                background: linear-gradient(135deg, #7a3cff, #9f6dff);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: 0.25s;
+                margin-top: 5px;
+            }
+
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 0 25px rgba(140, 75, 255, 0.45);
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="bg-glow"></div>
+
+        <div class="login-box">
+            <div class="logo"><span>SlideFlow</span></div>
+
+            <label>Username</label>
+            <input type="text" id="user" placeholder="Enter username" />
+
+            <label>Password</label>
+            <input type="password" id="pass" placeholder="Enter password" />
+
+            <button class="btn" onclick="login()">Login</button>
+        </div>
+
+        <script>
+            function login() {
+                const u = document.getElementById("user").value.trim();
+                const p = document.getElementById("pass").value.trim();
+
+                if (u === "admin" && p === "123") {
+                    window.location.href = "slideflow.html";
+                } else {
+                    alert("Incorrect username or password");
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "bTORJKC9tmiLEJyrZouPR/pLSjMWx0mYOgH+0PYFLoY=",
+  "Source": "DigitalSignageAPI",
+  "BasePath": "_content/DigitalSignageAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

@@ -1,0 +1,184 @@
+:root {
+    --primary: #7a3cff;
+    --bg: #f5f7fb;
+    --panel: #fff;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: Inter, system-ui, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* HEADER */
+header {
+    height: 64px;
+    background: var(--panel);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 16px;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.logo-text {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* BUTTONS */
+.btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+.btn-outline {
+    background: white;
+    border: 1px solid #ccc;
+}
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+/* LAYOUT */
+.editor-container {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    height: calc(100vh - 64px);
+}
+
+/* TOOLBAR */
+.toolbar {
+    background: white;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.tool-btn {
+    background: #f0f2f7;
+    border-radius: 10px;
+    height: 56px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 18px;
+}
+.tool-btn span {
+    display: block;
+    font-size: 10px;
+}
+
+/* CANVAS */
+.canvas-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.canvas-mock {
+    width: 720px;
+    height: 420px;
+    background: white;
+    border-radius: 14px;
+    border: 1px solid #ccc;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ITEMS */
+.canvas-item {
+    cursor: move;
+    background: transparent; /* 🔥 transparent textboxes */
+    padding: 6px;
+}
+.text-item {
+    color: #000;
+}
+.selected {
+    outline: 2px solid var(--primary);
+}
+
+/* MODAL */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+.modal-overlay[data-open="true"] {
+    display: flex;
+}
+
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    width: 800px;
+    max-height: 80vh;
+    overflow: auto;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    border: none;
+    background: #eee;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+/* TEMPLATES */
+.template-search {
+    width: 100%;
+    padding: 10px;
+    margin: 12px 0;
+}
+.template-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+}
+.template-card img {
+    width: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.template-item {
+    object-fit: cover;
+}
+
+/* ================= SCHEDULE MODAL INPUTS ================= */
+
+.modal label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.modal input[type="datetime-local"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
